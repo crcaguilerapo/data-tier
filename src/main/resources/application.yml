@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: dataTier
+  datasource:
+    url: jdbc:mysql://localhost:3306/db
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

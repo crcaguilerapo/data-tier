@@ -1,0 +1,78 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.jooq.jooq-codegen-gradle' version '3.19.10'
+	id 'org.liquibase.gradle' version '2.2.2'
+}
+
+group = 'org.crcaguilerapo'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.jooq:jooq:3.19.10'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.mysql:mysql-connector-j:8.4.0'
+	jooqCodegen 'com.mysql:mysql-connector-j:8.4.0'
+
+
+	liquibaseRuntime 'org.liquibase:liquibase-core:4.24.0'
+	liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
+	liquibaseRuntime 'info.picocli:picocli:4.7.5'
+	liquibaseRuntime 'org.yaml:snakeyaml:1.33'
+	liquibaseRuntime 'com.mysql:mysql-connector-j:8.4.0'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+jooq {
+	version = '3.19.1'
+	configuration {
+		jdbc {
+			driver = "com.mysql.cj.jdbc.Driver"
+			url = "jdbc:mysql://localhost:3306/db?protocol=tcp"
+			user = "admin"
+			password = "admin"
+		}
+		generator {
+			database {
+				name = "org.jooq.meta.mysql.MySQLDatabase"
+				inputSchema = "db"
+			}
+			generate {
+				relations = true
+				daos = true
+				pojos = true
+			}
+			target {
+				packageName = "jooq"
+				directory = "src/main/java/org/crcaguilerapo/dataTier"
+			}
+		}
+	}
+}
+
+liquibase {
+	activities {
+		main {
+			changeLogFile 'src/main/resources/db/changelog-root.yaml'
+			url 'jdbc:mysql://localhost:3306/db?protocol=tcp'
+			username 'admin'
+			password 'admin'
+		}
+	}
+	runList = 'main'
+}
